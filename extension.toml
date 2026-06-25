@@ -1,0 +1,11 @@
+id = "fasm"
+name = "FASM"
+version = "0.1.0"
+schema_version = 1
+authors = ["kmschr <kmschr@gmail.com>"]
+description = "Syntax highlighting for FASM (flat assembler)"
+repository = "https://github.com/kmschr/zed-fasm"
+
+[grammars.asm]
+repository = "https://github.com/RubixDev/tree-sitter-asm"
+rev = "839741fef4dab5128952334624905c82b40c7133"
