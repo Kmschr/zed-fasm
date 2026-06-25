@@ -1,78 +1,72 @@
-; General
+; Structural captures (from the grammar)
+
+(register) @variable.builtin
+
+(current_address) @constant.builtin
+
+(macro_keyword) @keyword
+
+(size_operator) @keyword
+
+(data_directive) @keyword
+
 (label
-  [(ident) (word)] @label)
+  name: (identifier) @label)
 
-(reg) @variable.builtin
+(data_definition
+  name: (identifier) @variable)
 
-(meta
-  kind: (_) @function.builtin)
+(assignment
+  name: (identifier) @constant)
 
+; Treat every instruction mnemonic and macro invocation as a function. FASM
+; directives are also parsed as instructions; they are recolored as keywords by
+; the #match? rules below (which come later and therefore win in Zed).
 (instruction
-  kind: (_) @function.builtin)
+  mnemonic: (identifier) @function)
 
-(const
-  name: (word) @constant)
-
-; Comments
-[
-  (line_comment)
-  (block_comment)
-] @comment
+(macro_definition
+  name: (identifier) @function)
 
 ; Literals
-(int) @number
+
+(number) @number
 
 (float) @number.float
 
 (string) @string
 
-; Size / type keywords
-[
-  "byte"
-  "word"
-  "dword"
-  "qword"
-  "ptr"
-  "rel"
-  "label"
-  "const"
-] @keyword
+(comment) @comment
 
-; Operators & Punctuation
-[
-  "+"
-  "-"
-  "*"
-  "/"
-  "%"
-  "|"
-  "^"
-  "&"
-] @operator
+; Operators & punctuation
 
-[
-  "("
-  ")"
-  "["
-  "]"
-] @punctuation.bracket
+(operator) @operator
+
+"=" @operator
 
 [
   ","
   ":"
 ] @punctuation.delimiter
 
-; FASM directives — parsed as instructions by the generic grammar, recolored
-; here as keywords. Listed after the generic (instruction) rule so they win.
-((instruction
-  kind: (word) @keyword)
-  (#match? @keyword "^(?i)(format|segment|section|entry|use16|use32|use64|public|extrn|extern|include|org|align|times|virtual|repeat|rept|irp|while|if|else|end|display|err|assert|macro|purge|struc|restruc|define|equ|fix|db|dw|dd|dq|dt|rb|rw|rd|rq|rt|file)$"))
+[
+  "{"
+  "}"
+  "["
+  "]"
+  "("
+  ")"
+] @punctuation.bracket
 
-; Segment / section attribute keywords. These appear as operands (e.g.
-; `SEGMENT READABLE EXECUTABLE`), so match the operand word text directly.
-((word) @keyword
+; FASM directives — parsed as instruction mnemonics, recolored as keywords.
+((instruction
+  mnemonic: (identifier) @keyword)
+  (#match? @keyword "^(?i)(format|segment|section|entry|stack|heap|public|extrn|extern|include|org|align|times|virtual|load|store|repeat|rept|irp|irps|while|if|else|end|break|postpone|purge|macro|struc|restruc|common|forward|local|match|define|restore|fix|equ|assert|display|err|use16|use32|use64|namespace|label|data|file)$"))
+
+; Segment / section attribute keywords (operands of `segment` / `section`).
+((identifier) @keyword
   (#match? @keyword "(?i)^(readable|writeable|writable|executable|shareable|discardable|notpageable|resource|fixups|import|export|native|gui|console|efi|efiboot|efiruntime|dll|wdm|nx|large)$"))
 
-; Output format / type names after FORMAT (ELF, ELF64, PE, PE64, COFF, MZ, ...).
-((word) @type
+; Output format / type names (operands of `format`: ELF64, PE, COFF, ...).
+((identifier) @type
   (#match? @type "(?i)^(elf|elf64|elfexe|elfruntime|pe|pe64|peconsole|pegui|ms|ms64|coff|mz|bin|binary|at)$"))

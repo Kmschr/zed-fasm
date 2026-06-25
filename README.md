@@ -7,16 +7,16 @@ Activates on `.asm` and `.fasm` files.
 
 ## How it works
 
-There is no FASM-specific Tree-sitter grammar, so this reuses the generic
-[`RubixDev/tree-sitter-asm`](https://github.com/RubixDev/tree-sitter-asm)
-grammar (pinned in `extension.toml`) and layers FASM-aware highlight queries on
-top in `languages/fasm/highlights.scm`.
+Highlighting is driven by a dedicated FASM Tree-sitter grammar,
+[`Kmschr/tree-sitter-fasm`](https://github.com/Kmschr/tree-sitter-fasm) (pinned
+in `extension.toml`). The extension's `languages/fasm/highlights.scm` maps the
+grammar's nodes to highlight groups and classifies keywords (directives, segment
+attributes, format names) with `#match?` predicates, so those lists are easy to
+extend.
 
 ## Limitations
 
-- Bare operand symbols (labels, macro args, data names) are colored as
-  registers. The generic grammar can't tell them apart.
-- `macro` / `struc` `{ ... }` bodies parse loosely; some lines may not highlight
-  perfectly.
-- Directive list in `highlights.scm` covers the common FASM keywords; add more
-  to the `#match?` regex as needed.
+- It is a highlighter, not an assembler: the grammar is forgiving and does not
+  validate operands or instruction semantics.
+- Keyword lists in `highlights.scm` cover the common FASM directives, segment
+  attributes, and output formats; add more to the `#match?` regexes as needed.
