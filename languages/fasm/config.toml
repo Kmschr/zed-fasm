@@ -1,6 +1,6 @@
 name = "FASM"
 grammar = "asm"
-path_suffixes = ["asm", "fasm", "inc"]
+path_suffixes = ["asm", "fasm"]
 line_comments = ["; "]
 autoclose_before = ";:.,=}])"
 

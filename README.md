@@ -3,7 +3,7 @@
 Syntax highlighting for [FASM](https://flatassembler.net/) (flat assembler) in the
 [Zed](https://zed.dev) editor.
 
-Activates on `.asm`, `.fasm`, and `.inc` files.
+Activates on `.asm` and `.fasm` files.
 
 ## How it works
 
